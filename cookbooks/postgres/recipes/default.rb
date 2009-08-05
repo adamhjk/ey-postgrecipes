@@ -46,27 +46,25 @@ node[:applications].each do |app_name,data|
   db_name = "#{app_name}_#{node[:environment][:framework_env]}"
 
   execute "create-db-user-#{user[:username]}" do
-    command "psql -c \"create user #{user[:username]} with encrypted password \'#{user[:password]}\'\""
+    command "`psql -c '\\du' | grep -q '#{user[:username]}'`; if [ $? -eq 1 ]; then\n  psql -c \"create user #{user[:username]} with encrypted password \'#{user[:password]}\'\"\nfi"
     action :run
     user 'postgres'
-    only_if "psql -c '\\du' | grep -q '#{user[:username]}'"
   end
 
   execute "create-db-#{db_name}" do
-    command "createdb #{db_name}"
+    command "`psql -c '\\l' | grep -q '#{db_name}'`; if [ $? -eq 1 ]; then\n  createdb #{db_name}\nfi"
     action :run
     user 'postgres'
-    only_if "psql -c '\\l' | grep -q '#{db_name}'"
   end
 
   execute "grant-perms-on-#{db_name}-to-#{user[:username]}" do
-    command "psql -c 'grant all on database #{db_name} to #{user[:username]}'"
+    command "/usr/bin/psql -c 'grant all on database #{db_name} to #{user[:username]}'"
     action :run
     user 'postgres'
   end
 
   execute "alter-public-schema-owner-on-#{db_name}-to-#{user[:username]}" do
-    command "psql #{db_name} -c 'ALTER SCHEMA public OWNER TO #{user[:username]}'"
+    command "/usr/bin/psql #{db_name} -c 'ALTER SCHEMA public OWNER TO #{user[:username]}'"
     action :run
     user 'postgres'
   end
