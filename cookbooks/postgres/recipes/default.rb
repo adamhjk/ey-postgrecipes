@@ -14,15 +14,15 @@ directory '/db/postgresql' do
   recursive true
 end
 
-#execute "setup-postgres-db-mount-symlink" do
-  #command "rm -rf #{postgres_root}"
-  #action :run
-  #only_if "if [ ! -L #{postgres_root} ]; then exit 0; fi; exit 1;"
-#end
-
 link "setup-postgresq-db-my-symlink" do
   to '/db/postgresql'
   target_file postgres_root
+end
+
+execute "setup-postgresql-db-symlink" do
+  command "rm -rf /var/lib/postgresql; ln -s /data/postgresql /var/lib/postgresql"
+  action :run
+  only_if "if [ ! -L #{postgres_root} ]; then exit 0; fi; exit 1;"
 end
 
 execute "init-postgres" do
