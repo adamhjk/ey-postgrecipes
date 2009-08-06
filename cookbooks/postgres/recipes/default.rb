@@ -26,9 +26,10 @@ execute "setup-postgresql-db-symlink" do
 end
 
 execute "init-postgres" do
-  command "su - postgres -c 'initdb -D #{postgres_root}/#{postgres_version}/data'"
+  command "initdb -D #{postgres_root}/#{postgres_version}/data"
   action :run
-  only_if "if [ ! -d #{postgres_root}/#{postgres_version}/data ]; then exit 0; fi; exit 1;"
+  user 'postgres'
+  not_if "if [ ! -d #{postgres_root}/#{postgres_version}/data ]; then exit 0; fi; exit 1;"
 end
 
 execute "enable-postgres" do
