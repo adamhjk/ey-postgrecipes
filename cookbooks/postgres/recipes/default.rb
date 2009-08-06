@@ -29,7 +29,7 @@ execute "init-postgres" do
   command "initdb -D #{postgres_root}/#{postgres_version}/data"
   action :run
   user 'postgres'
-  not_if "if [ ! -d #{postgres_root}/#{postgres_version}/data ]; then exit 0; fi; exit 1;"
+  only_if "if [ ! -d #{postgres_root}/#{postgres_version}/data ]; then exit 0; fi; exit 1;"
 end
 
 execute "enable-postgres" do
