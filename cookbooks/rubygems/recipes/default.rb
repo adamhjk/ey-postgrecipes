@@ -17,3 +17,8 @@ execute "install-rubygems" do
   command "cd rubygems-1.3.5; ruby setup.rb"
   action :run
 end
+
+execute "install-bundler" do
+  command "gem install bundler"
+  action :run
+end
