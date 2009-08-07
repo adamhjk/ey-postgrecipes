@@ -40,6 +40,7 @@ end
 execute "restart-postgres" do
   command "/etc/init.d/postgresql-#{postgres_version} restart"
   action :run
+  not_if "/etc/init.d/postgresql-8.3 status | grep -q start"
 end
 
 node[:applications].each do |app_name,data|
