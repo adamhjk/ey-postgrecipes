@@ -53,6 +53,11 @@ node[:applications].each do |app_name,data|
     user 'postgres'
   end
 
+  database db_name do
+    action :create
+    provider "postgres_database"
+  end
+
   execute "create-db-#{db_name}" do
     command "`psql -c '\\l' | grep -q '#{db_name}'`; if [ $? -eq 1 ]; then\n  createdb #{db_name}\nfi"
     action :run
